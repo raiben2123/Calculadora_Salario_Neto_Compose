@@ -16,11 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun Salario(){
+fun Salario(onValueChange: (String) -> Unit){
     var salarioBruto by remember { mutableStateOf("") }
     OutlinedTextField(
         value = salarioBruto,
-        onValueChange = {newText -> salarioBruto = newText},
+        onValueChange = {newText -> salarioBruto = newText
+                        onValueChange(newText)},
         label = { Text("Salario", fontSize = 13.sp) },
         maxLines = 1,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

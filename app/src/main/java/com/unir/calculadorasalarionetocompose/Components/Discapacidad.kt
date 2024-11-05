@@ -8,9 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +24,7 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun Discapacidad(){
+fun Discapacidad(onValueChange: (String) -> Unit){
     var selectedDiscapacidad by remember { mutableStateOf("Grado de Discapacidad") }
     val discapacidades = listOf("Sin discapacidad","Mayor o igual al 65%", "Menor del 65% (sin asistencia)", "Menor del 65% (con asistencia)")
     var isSelected by remember { mutableStateOf(false) }
@@ -47,18 +46,39 @@ fun Discapacidad(){
                 text = selectedDiscapacidad,
             )
         }
-        DropdownMenu(
-            expanded = expandedDiscapacidad,
-            onDismissRequest = {expandedDiscapacidad = true}
-        ) {
-            discapacidades.forEach{ discapacidad -> DropdownMenuItem(
-                onClick = {
-                    selectedDiscapacidad = discapacidad
-                    expandedDiscapacidad = false
+        if (isSelected) {
+            AlertDialog(
+                onDismissRequest = { isSelected = false },
+                title = { Text(text = "Selecciona tu % de discapacidad") },
+                confirmButton = {
+                    Button(onClick = { isSelected = false }) {
+                        Text("Confirmar")
+                    }
                 },
-                text = { Text(text = discapacidad) }
+                dismissButton = {
+                    Button(onClick = { isSelected = false }) {
+                        Text("Cancelar")
+                    }
+                },
+                text = {
+                    Column {
+                        discapacidades.forEach { discapacidad ->
+                            Text(
+                                text = discapacidad,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        selectedDiscapacidad =
+                                            discapacidad // Actualiza el estado civil seleccionado
+                                        onValueChange(selectedDiscapacidad)
+                                        isSelected = false // Cierra el diálogo
+                                    }
+                                    .padding(16.dp)
+                            )
+                        }
+                    }
+                }
             )
-            }
         }
     }
 }

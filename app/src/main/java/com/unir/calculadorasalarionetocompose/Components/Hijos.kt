@@ -16,11 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun Hijos(){
+fun Hijos(onValueChange: (String) -> Unit){
     var hijos by remember { mutableStateOf("") }
     OutlinedTextField(
         value = hijos,
-        onValueChange = {newText -> hijos = newText},
+        onValueChange = {newText -> hijos = newText
+                        onValueChange(newText)},
         label = { Text("Hijos", fontSize = 13.sp) },
         maxLines = 1,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

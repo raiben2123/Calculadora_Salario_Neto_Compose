@@ -5,11 +5,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun Contrato(){
+fun Contrato(onValueChange: (String) -> Unit){
     var selectedContrato by remember { mutableStateOf("Contrato") }
     val contratos = listOf("General", "Inferior a un año")
     var isSelected by remember { mutableStateOf(false) }
@@ -45,18 +46,39 @@ fun Contrato(){
                 text = selectedContrato,
             )
         }
-        DropdownMenu(
-            expanded = expandedContrato,
-            onDismissRequest = {expandedContrato = true}
-        ) {
-            contratos.forEach{ contrato -> DropdownMenuItem(
-                onClick = {
-                    selectedContrato = contrato
-                    expandedContrato = false
+        if (isSelected) {
+            AlertDialog(
+                onDismissRequest = { isSelected = false },
+                title = { Text(text = "Selecciona tu tipo de contrato") },
+                confirmButton = {
+                    Button(onClick = { isSelected = false }) {
+                        Text("Confirmar")
+                    }
                 },
-                text = { Text(text = contrato) }
+                dismissButton = {
+                    Button(onClick = { isSelected = false }) {
+                        Text("Cancelar")
+                    }
+                },
+                text = {
+                    Column {
+                        contratos.forEach { contrato ->
+                            Text(
+                                text = contrato,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        selectedContrato =
+                                            contrato // Actualiza el estado civil seleccionado
+                                        onValueChange(selectedContrato)
+                                        isSelected = false // Cierra el diálogo
+                                    }
+                                    .padding(16.dp)
+                            )
+                        }
+                    }
+                }
             )
-            }
         }
     }
 }

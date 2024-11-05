@@ -16,11 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun Edad(){
+fun Edad(onValueChange: (String) -> Unit){
     var edad by remember { mutableStateOf("") }
     OutlinedTextField(
         value = edad,
-        onValueChange = {newText -> edad = newText},
+        onValueChange = {newText -> edad = newText
+                        onValueChange(newText)},
         label = { Text("Edad", fontSize = 13.sp) },
         maxLines = 1,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

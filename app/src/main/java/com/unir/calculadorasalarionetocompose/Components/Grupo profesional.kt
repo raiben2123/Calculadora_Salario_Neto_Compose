@@ -8,9 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +24,7 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun GrupoProfesional(){
+fun GrupoProfesional(onValueChange: (String) -> Unit){
     var selectedGrupoProf by remember { mutableStateOf("Grupo Profesional") }
     val grupoProfs = listOf("Licenciados", "Ingenieros técnico, peritos y ayudantes", "Jefes administrativos y de taller", "Ayudantes no titulados", "Oficiales administrativos", "Subalternos", "Auxiliares administrativos", "Oficiales de 1ª y 2ª", "Oficiales de 3ª", "Peones", "Trabajadores menores de 18 años", "Autónomo")
     var isSelected by remember { mutableStateOf(false) }
@@ -47,18 +46,39 @@ fun GrupoProfesional(){
                 text = selectedGrupoProf,
             )
         }
-        DropdownMenu(
-            expanded = expandedContrato,
-            onDismissRequest = {expandedContrato = true}
-        ) {
-            grupoProfs.forEach{ grupoProf -> DropdownMenuItem(
-                onClick = {
-                    selectedGrupoProf = grupoProf
-                    expandedContrato = false
+        if (isSelected) {
+            AlertDialog(
+                onDismissRequest = { isSelected = false },
+                title = { Text(text = "Selecciona tu grupo profesional") },
+                confirmButton = {
+                    Button(onClick = { isSelected = false }) {
+                        Text("Confirmar")
+                    }
                 },
-                text = { Text(text = grupoProf) }
+                dismissButton = {
+                    Button(onClick = { isSelected = false }) {
+                        Text("Cancelar")
+                    }
+                },
+                text = {
+                    Column {
+                        grupoProfs.forEach { grupoProf ->
+                            Text(
+                                text = grupoProf,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        selectedGrupoProf =
+                                            grupoProf // Actualiza el estado civil seleccionado
+                                        onValueChange(selectedGrupoProf)
+                                        isSelected = false // Cierra el diálogo
+                                    }
+                                    .padding(16.dp)
+                            )
+                        }
+                    }
+                }
             )
-            }
         }
     }
 }

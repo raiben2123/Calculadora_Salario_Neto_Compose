@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun EstadoCivil(){
+fun EstadoCivil(onValueChange: (String) -> Unit){
     var selectedEstadoCivil by remember { mutableStateOf("Estado Civil") }
     val estadosCiviles = listOf("Casado", "Divorciado", "Separado", "Soltero", "Viudo")
     var isSelected by remember { mutableStateOf(false) }
@@ -46,20 +46,42 @@ fun EstadoCivil(){
                 modifier = Modifier
                 .padding(start = 10.dp),
                 text = selectedEstadoCivil,
+
             )
         }
-        DropdownMenu(
-            expanded = expandedEstadoCivil,
-            onDismissRequest = {expandedEstadoCivil = true}
-        ) {
-            estadosCiviles.forEach{ estadoCivil -> DropdownMenuItem(
-                onClick = {
-                    selectedEstadoCivil = estadoCivil
-                    expandedEstadoCivil = false
+        if (isSelected) {
+            AlertDialog(
+                onDismissRequest = { isSelected = false },
+                title = { Text(text = "Selecciona tu estado civil") },
+                confirmButton = {
+                    Button(onClick = { isSelected = false }) {
+                        Text("Confirmar")
+                    }
                 },
-                text = { Text(text = estadoCivil) }
+                dismissButton = {
+                    Button(onClick = { isSelected = false }) {
+                        Text("Cancelar")
+                    }
+                },
+                text = {
+                    Column {
+                        estadosCiviles.forEach { estadoCivil ->
+                            Text(
+                                text = estadoCivil,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        selectedEstadoCivil =
+                                            estadoCivil // Actualiza el estado civil seleccionado
+                                        onValueChange(selectedEstadoCivil)
+                                        isSelected = false // Cierra el diálogo
+                                    }
+                                    .padding(16.dp)
+                            )
+                        }
+                    }
+                }
             )
-            }
         }
     }
 }

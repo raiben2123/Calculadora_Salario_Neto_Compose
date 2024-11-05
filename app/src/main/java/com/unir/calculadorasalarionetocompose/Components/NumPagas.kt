@@ -16,11 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun NumPagas(){
+fun NumPagas(onValueChange: (String) -> Unit){
     var numPagas by remember { mutableStateOf("") }
     OutlinedTextField(
         value = numPagas,
-        onValueChange = {newText -> numPagas = newText},
+        onValueChange = {newText -> numPagas = newText
+                        onValueChange(newText)},
         label = { Text("Pagas", fontSize = 13.sp) },
         maxLines = 1,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

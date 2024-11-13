@@ -10,13 +10,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.unir.calculadorasalarionetocompose.screens.MainScreen
 import com.unir.calculadorasalarionetocompose.screens.SecondScreen
+import com.unir.calculadorasalarionetocompose.ui.theme.CalculadoraSalarioNetoComposeTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val navController = rememberNavController()
-            MyApp(navController)
+            CalculadoraSalarioNetoComposeTheme {
+                val navController = rememberNavController()
+                MyApp(navController)
+            }
         }
     }
 }

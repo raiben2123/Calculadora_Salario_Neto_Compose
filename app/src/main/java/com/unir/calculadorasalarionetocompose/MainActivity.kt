@@ -31,23 +31,19 @@ fun MyApp(navController: NavHostController) {
         composable("SecondScreen/{contrato}/{discapacidad}/{edad}/{estadoCivil}/{grupoProfesional}/{hijos}/{numPagas}/{salario}") { backStackEntry ->
             val contrato = backStackEntry.arguments?.getString("contrato")
             val discapacidad = backStackEntry.arguments?.getString("discapacidad")
-            val edad = backStackEntry.arguments?.getString("edad")
-            val estadoCivil = backStackEntry.arguments?.getString("estadoCivil")
-            val grupoProfesional = backStackEntry.arguments?.getString("grupoProfesional")
-            val hijos = backStackEntry.arguments?.getString("hijos")
-            val numPagas = backStackEntry.arguments?.getString("numPagas")
-            val salario = backStackEntry.arguments?.getString("salario")
+            val hijos = backStackEntry.arguments?.getString("hijos")?.toIntOrNull()
+            val numPagas = backStackEntry.arguments?.getString("numPagas")?.toIntOrNull()
+            val salario = backStackEntry.arguments?.getString("salario")?.toDoubleOrNull()
 
-            SecondScreen(
-                contrato,
-                discapacidad,
-                edad,
-                estadoCivil,
-                grupoProfesional,
-                hijos,
-                numPagas,
-                salario
-            )
+            if (salario != null) {
+                SecondScreen(
+                    contrato,
+                    discapacidad,
+                    hijos,
+                    numPagas,
+                    salario
+                )
+            }
         }
     }
 }

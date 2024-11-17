@@ -1,6 +1,6 @@
 package com.unir.calculadorasalarionetocompose.screens
 
-import androidx.compose.foundation.background
+import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -84,7 +83,16 @@ fun MainScreen(navController: NavHostController) {
                 Hijos { newHijos -> hijos = newHijos }
             }
         Spacer(modifier = Modifier.height(40.dp))
-        Button(onClick = {navController.navigate("secondScreen/$contrato/$discapacidad/$edad/$estadoCivil/$grupoProfesional/$hijos/$numPagas/$salario") }) {
+        Button(onClick = {navController.navigate("secondScreen/" +
+                "${Uri.encode(contrato)}/" +
+                "${Uri.encode(discapacidad)}/" +
+                "${Uri.encode(edad)}/" +
+                "${Uri.encode(estadoCivil)}/" +
+                "${Uri.encode(grupoProfesional)}/" +
+                "${Uri.encode(hijos)}/" +
+                "${Uri.encode(numPagas)}/" +
+                "${Uri.encode(salario)}/"
+        )}) {
             Text("Calcular")
         }
     }

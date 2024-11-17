@@ -1,6 +1,7 @@
 package com.unir.calculadorasalarionetocompose.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -12,93 +13,120 @@ import androidx.compose.ui.Modifier
 fun SecondScreen(
     contrato: String?,
     discapacidad: String?,
-    edad: String?,
-    estadoCivil: String?,
-    grupoProfesional: String?,
-    hijos: String?,
-    numPagas: String?,
-    salario: String?,
-    restaSal: Double? = calcularNeto(salario),
-    deduccion: Int = calcularHijos(hijos) + calcularDiscapacidad(discapacidad),
-    salNeto: Double? = calcularSalNeto(salario, deduccion, restaSal),
-    irpfFinal: String = calcularIRPF(salario, salNeto).toString()
+    hijos: Int?,
+    numPagas: Int?,
+    salario: Double?
 ) {
+    val deduccionSSSal = calcularDeduccionSS(salario, contrato)
+    val deduccion = calcularHijos(hijos) + calcularDiscapacidad(discapacidad)
+    val irpf = calcularIRPF(salario, deduccionSSSal, deduccion)
+    val rIRPF = salario?.minus(deduccionSSSal)?.times(irpf.toDouble() / 100)?.minus(deduccion)
+    val salNeto = salario?.minus(deduccionSSSal)?.minus(rIRPF ?: 0.0)
+    val salNetoMensual = salNeto?.div(numPagas ?: 12)
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Salario bruto: $salario")
-        Text("Salario neto: $salNeto")
-        if (salNeto != null) {
-            if (numPagas != null) {
-                Text("Salario mensual: " + salNeto/numPagas.toInt())
+        Box(){
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Salario Bruto")
+                Text("$salario")
             }
         }
-        Text("Retención de IRPF: $irpfFinal"+"%")
-        Text("Posibles deducciones: $deduccion")
+        Box(){
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Pago de SS")
+                Text("$deduccionSSSal")
+            }
+        }
+        Box(){
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Posibles deducciones - IRPF")
+                Text("$deduccion")
+            }
+        }
+        Box(){
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Retención de IRPF")
+                Text("$irpf"+"%")
+            }
+        }
+        Box(){
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Resultado IRPF")
+                Text("$rIRPF")
+            }
+        }
+        Box(){
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Salario Neto")
+                Text("$salNeto")
+            }
+        }
+        Box(){
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Salario mensual")
+                Text("$salNetoMensual")
+            }
+        }
     }
 }
 
-fun calcularNeto(salario: String?): Double? {
-    val salarioInt = salario?.toDouble()
-    if (salarioInt != null){
-        if (salarioInt <= 12450){
-            val IRPF = 0.19
-            val restaSal = salarioInt * IRPF
-            return restaSal
-        }else{
-            if (salarioInt <= 20199){
-                val IRPF = 0.24
-                val restaSal = salarioInt * IRPF
-                return restaSal
-            }else{
-                if (salarioInt <= 35199){
-                    val IRPF = 0.30
-                    val restaSal = salarioInt * IRPF
-                    return restaSal
-                }else{
-                    if (salarioInt <= 59999){
-                        val IRPF = 0.37
-                        val restaSal = salarioInt * IRPF
-                        return restaSal
-                    }else{
-                        if (salarioInt <= 299999){
-                            val IRPF = 0.45
-                            val restaSal = salarioInt * IRPF
-                            return restaSal
-                        }else{
-                            if (salarioInt >= 300000){
-                                val IRPF = 0.47
-                                val restaSal = salarioInt * IRPF
-                                return restaSal
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }else{
-        return null
+fun calcularDeduccionSS(salario: Double?, contrato: String?): Double {
+    if (salario == null) return 0.0
+    return when (contrato) {
+        "General" -> salario * 0.0635
+        "Inferior a un año" -> salario * 0.064
+        else -> 0.0
     }
-    return null
 }
-fun calcularHijos(hijos: String?): Int {
-    val hijosInt = hijos?.toInt()
+
+fun calcularIRPF(salario: Double?, deduccionSSSal: Double, deduccion: Int): Int {
+    if (salario == null) return 0
+    val resultado = salario - deduccionSSSal - deduccion
+    return when (resultado) {
+        in 0.0..12449.0 -> 0
+        in 12450.0..20199.0 -> 19
+        in 20200.0..35199.0 -> 24
+        in 35200.0..59999.0 -> 30
+        in 60000.0..299999.0 -> 37
+        in 300000.0..Double.MAX_VALUE -> 45
+        else -> 0
+    }
+}
+
+fun calcularHijos(hijos: Int?): Int {
     val deduccion: Int
-    when (hijosInt){
+    when (hijos){
         0 -> {deduccion = 0
             return deduccion}
         1 -> {deduccion = 2400
             return deduccion}
-        2 -> {deduccion = 2700
+        2 -> {deduccion = 2700+2400
             return deduccion}
-        3 -> {deduccion = 4000
+        3 -> {deduccion = 4000+2700+2400
             return deduccion}
-        else -> {deduccion = 4500
+        else -> {deduccion = 4500+4000+2700+2400
             return deduccion}
     }
 }
+
 fun calcularDiscapacidad(discapacidad: String?): Int{
     val deduccion: Int
     when(discapacidad){
@@ -112,26 +140,4 @@ fun calcularDiscapacidad(discapacidad: String?): Int{
             return deduccion}
     }
     return 0
-}
-fun calcularSalNeto(salario: String?, deduccion: Int, restaSal: Double?): Double? {
-    val salInt = salario?.toInt()
-    var totalResta = 0.0
-    if (deduccion > restaSal!!){
-        if (salInt != null) {
-            totalResta = salInt - (restaSal - restaSal)
-        }
-        return totalResta
-    } else{
-        if (salInt != null) {
-            totalResta = salInt - (restaSal - deduccion)
-            return totalResta
-        }
-    }
-    return null
-}
-fun calcularIRPF(salario: String?,salNeto: Double?): Double? {
-    val salarioInt = salario?.toInt()
-    val irpfAplicado = salarioInt?.minus(salNeto!!)
-    val irpfPorcentaje = irpfAplicado?.div(salarioInt)?.times(100)
-    return irpfPorcentaje
 }

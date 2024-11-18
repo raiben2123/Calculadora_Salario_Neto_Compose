@@ -83,15 +83,12 @@ fun MainScreen(navController: NavHostController) {
                 Hijos { newHijos -> hijos = newHijos }
             }
         Spacer(modifier = Modifier.height(40.dp))
-        Button(onClick = {navController.navigate("secondScreen/" +
+        Button(onClick = {navController.navigate( "SecondScreen/" +
                 "${Uri.encode(contrato)}/" +
                 "${Uri.encode(discapacidad)}/" +
-                "${Uri.encode(edad)}/" +
-                "${Uri.encode(estadoCivil)}/" +
-                "${Uri.encode(grupoProfesional)}/" +
-                "${Uri.encode(hijos)}/" +
-                "${Uri.encode(numPagas)}/" +
-                "${Uri.encode(salario)}/"
+                "${hijos.ifEmpty { "0" }}/" +
+                "${numPagas.ifEmpty { "12" }}/" +
+                "${salario.ifEmpty { "0.0" }}"
         )}) {
             Text("Calcular")
         }

@@ -13,16 +13,16 @@ import androidx.compose.ui.Modifier
 fun SecondScreen(
     contrato: String?,
     discapacidad: String?,
-    hijos: Int?,
-    numPagas: Int?,
-    salario: Double?
+    hijos: Int,
+    numPagas: Int,
+    salario: Double
 ) {
     val deduccionSSSal = calcularDeduccionSS(salario, contrato)
     val deduccion = calcularHijos(hijos) + calcularDiscapacidad(discapacidad)
     val irpf = calcularIRPF(salario, deduccionSSSal, deduccion)
-    val rIRPF = salario?.minus(deduccionSSSal)?.times(irpf.toDouble() / 100)?.minus(deduccion)
-    val salNeto = salario?.minus(deduccionSSSal)?.minus(rIRPF ?: 0.0)
-    val salNetoMensual = salNeto?.div(numPagas ?: 12)
+    val rIRPF = salario.minus(deduccionSSSal).times(irpf.toDouble() / 100).minus(deduccion)
+    val salNeto = salario.minus(deduccionSSSal).minus(rIRPF)
+    val salNetoMensual = salNeto.div(numPagas)
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -101,7 +101,7 @@ fun calcularIRPF(salario: Double?, deduccionSSSal: Double, deduccion: Int): Int 
     if (salario == null) return 0
     val resultado = salario - deduccionSSSal - deduccion
     return when (resultado) {
-        in 0.0..12449.0 -> 0
+        in 0.0..12449.9 -> 0
         in 12450.0..20199.0 -> 19
         in 20200.0..35199.0 -> 24
         in 35200.0..59999.0 -> 30

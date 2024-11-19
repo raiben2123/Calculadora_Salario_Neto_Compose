@@ -1,13 +1,20 @@
 package com.unir.calculadorasalarionetocompose.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun SecondScreen(
@@ -23,67 +30,55 @@ fun SecondScreen(
     val rIRPF = salario.minus(deduccionSSSal).times(irpf.toDouble() / 100).minus(deduccion)
     val salNeto = salario.minus(deduccionSSSal).minus(rIRPF)
     val salNetoMensual = salNeto.div(numPagas)
+    val salNetoMensualFormateado = "%.2f".format(salNetoMensual)
 
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp) // Espaciado uniforme
     ) {
-        Box(){
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Salario Bruto")
-                Text("$salario")
-            }
-        }
-        Box(){
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Pago de SS")
-                Text("$deduccionSSSal")
-            }
-        }
-        Box(){
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Posibles deducciones - IRPF")
-                Text("$deduccion")
-            }
-        }
-        Box(){
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Retención de IRPF")
-                Text("$irpf"+"%")
-            }
-        }
-        Box(){
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Resultado IRPF")
-                Text("$rIRPF")
-            }
-        }
-        Box(){
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Salario Neto")
-                Text("$salNeto")
-            }
-        }
-        Box(){
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Salario mensual")
-                Text("$salNetoMensual")
-            }
+        Text(
+            text = "Resultado del cálculo",
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(bottom = 24.dp) // Separación superior
+        )
+
+        ResultCard("Salario Bruto", "$salario")
+        ResultCard("Pago de Seguridad Social", "$deduccionSSSal")
+        ResultCard("Deducciones por IRPF", "$deduccion")
+        ResultCard("Porcentaje de Retención IRPF", "$irpf%")
+        ResultCard("Resultado IRPF", "$rIRPF")
+        ResultCard("Salario Neto Anual", "$salNeto")
+        ResultCard("Salario Neto Mensual", "$salNetoMensualFormateado")
+    }
+}
+
+@Composable
+fun ResultCard(label: String, value: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .padding(16.dp), // Espaciado interno
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }
